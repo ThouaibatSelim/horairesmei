@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifier un créneau</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #219150;
+    }
+  </style>
+</head>
+<body>
+  <h1>Modifier le créneau</h1>
+
+  <form action="/admin/update/<%= horaire.id %>" method="POST">
+    <label for="jour">Jour :</label>
+    <input type="text" name="jour" value="<%= horaire.jour %>" required>
+
+    <label for="type">Type :</label>
+    <select name="type" required>
+      <option value="public" <%= horaire.type === 'public' ? 'selected' : '' %>>Public</option>
+      <option value="rdv" <%= horaire.type === 'rdv' ? 'selected' : '' %>>Sur rendez-vous</option>
+    </select>
+
+    <label for="ouverture">Heure d'ouverture :</label>
+    <input type="time" name="ouverture" value="<%= horaire.ouverture || '' %>">
+
+    <label for="fermeture">Heure de fermeture :</label>
+    <input type="time" name="fermeture" value="<%= horaire.fermeture || '' %>">
+
+    <label for="commentaire">Commentaire :</label>
+    <textarea name="commentaire"><%= horaire.commentaire || '' %></textarea>
+
+    <button type="submit">Enregistrer les modifications</button>
+  </form>
+</body>
+</html>

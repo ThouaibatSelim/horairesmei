@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Horaires d'ouverture</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      font-size: 13px;
+      line-height: 1.4;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .jour {
+      margin-bottom: 0.8em;
+      padding-bottom: 0.5em;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: center;
+    }
+
+    .jour strong {
+      display: block;
+      font-size: 13px;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .horaire, .rdv, .ferme {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px 4px;
+    }
+
+    .horaire {
+      background-color: #d6f5d6;
+      color: #145214;
+      font-weight: 500;
+    }
+
+    .rdv {
+      background-color: #ffe0e0;
+      color: #cc0000;
+      font-weight: bold;
+    }
+
+    .ferme {
+      background-color: #e0e0e0;
+      color: #666;
+      font-style: italic;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <% const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche']; %>
+
+    <% for (let jour of jours) { %>
+      <div class="jour">
+        <strong><%= jour.charAt(0).toUpperCase() + jour.slice(1) %> :</strong>
+
+        <% 
+          const duJour = horaires.filter(h => h.jour === jour);
+
+          if (duJour.length === 0) { %>
+            <span class="ferme">Fermé</span>
+        <% } else {
+            // 1. Afficher "fermé" si commentaire === 'fermé'
+            const fermeture = duJour.find(h => h.commentaire && h.commentaire.toLowerCase() === 'fermé');
+            if (fermeture) { %>
+              <span class="ferme">Fermé</span>
+        <%  } else {
+              // 2. Afficher RDV si présent
+              duJour
+                .filter(h => h.type === 'rdv')
+                .forEach(h => { %>
+                  <span class="rdv"><%= h.commentaire %></span><br>
+              <% });
+
+              // 3. Afficher horaires publics
+              duJour
+                .filter(h => h.type === 'public' && h.ouverture && h.fermeture)
+                .sort((a, b) => a.ouverture.localeCompare(b.ouverture))
+                .forEach(h => { %>
+                  <span class="horaire"><%= h.ouverture.slice(0,5) %> - <%= h.fermeture.slice(0,5) %></span>
+              <% });
+            }
+          } %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
