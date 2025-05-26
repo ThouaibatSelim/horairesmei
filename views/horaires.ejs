@@ -3,115 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <title>Horaires d'ouverture</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f9f9f9;
       color: #333;
-      font-size: 13px;
+      font-size: 14px;
       line-height: 1.4;
-      height: 100%;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      padding: 20px;
       box-sizing: border-box;
     }
 
-    h1 {
+    .container {
+      max-width: 100%;
+      padding: 20px;
       text-align: center;
-      color: #2c3e50;
+    }
+
+    h1 {
       font-size: 20px;
       margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    .ligne {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow-x: auto;
+      white-space: nowrap;
     }
 
     .jour {
-      margin-bottom: 0.8em;
-      padding-bottom: 0.5em;
-      border-bottom: 1px solid #e0e0e0;
-      text-align: center;
-    }
-
-    .jour strong {
-      display: block;
-      font-size: 13px;
-      color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-
-    .horaire, .rdv, .ferme {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin: 2px 4px;
+      font-weight: bold;
+      color: #2c3e50;
     }
 
     .horaire {
-      background-color: #d6f5d6;
+      margin: 0 6px;
       color: #145214;
-      font-weight: 500;
     }
 
     .rdv {
-      background-color: #ffe0e0;
+      margin: 0 6px;
       color: #cc0000;
       font-weight: bold;
     }
 
     .ferme {
-      background-color: #e0e0e0;
-      color: #666;
+      margin: 0 6px;
+      color: #999;
       font-style: italic;
-      font-weight: 500;
+    }
+
+    .separator {
+      margin: 0 12px;
+      color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <h1>Horaires d’ouverture</h1>
 
-    <% const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche']; %>
+    <% 
+      const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
 
-    <% for (let jour of jours) { %>
-      <div class="jour">
-        <strong><%= jour.charAt(0).toUpperCase() + jour.slice(1) %> :</strong>
+      // 1. Ligne des horaires publics
+      const lignePublic = jours.map(jour => {
+        const publics = horaires
+          .filter(h => h.jour === jour && h.type === 'public')
+          .sort((a, b) => (a.ouverture || '').localeCompare(b.ouverture || ''));
 
-        <% 
-          const duJour = horaires.filter(h => h.jour === jour);
+        if (publics.length === 0) return `
+          <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
+          <span class="ferme">Fermé</span>
+        `;
 
-          if (duJour.length === 0) { %>
-            <span class="ferme">Fermé</span>
-        <% } else {
-            // 1. Afficher "fermé" si commentaire === 'fermé'
-            const fermeture = duJour.find(h => h.commentaire && h.commentaire.toLowerCase() === 'fermé');
-            if (fermeture) { %>
-              <span class="ferme">Fermé</span>
-        <%  } else {
-              // 2. Afficher RDV si présent
-              duJour
-                .filter(h => h.type === 'rdv')
-                .forEach(h => { %>
-                  <span class="rdv"><%= h.commentaire %></span><br>
-              <% });
+        const horairesHTML = publics
+          .filter(h => h.ouverture && h.fermeture)
+          .map(h => `<span class="horaire">${h.ouverture.slice(0,5)} - ${h.fermeture.slice(0,5)}</span>`)
+          .join(' ');
 
-              // 3. Afficher horaires publics
-              duJour
-                .filter(h => h.type === 'public' && h.ouverture && h.fermeture)
-                .sort((a, b) => a.ouverture.localeCompare(b.ouverture))
-                .forEach(h => { %>
-                  <span class="horaire"><%= h.ouverture.slice(0,5) %> - <%= h.fermeture.slice(0,5) %></span>
-              <% });
-            }
-          } %>
+        const commentaireFermeture = publics.find(h => h.commentaire === 'fermé');
+        const fermetureHTML = commentaireFermeture ? `<span class="ferme">Fermé</span>` : '';
+
+        return `
+          <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
+          ${horairesHTML || fermetureHTML}
+        `;
+      });
+
+      // 2. Ligne des "Sur rendez-vous"
+      const ligneRDV = jours.map(jour => {
+        const rdv = horaires
+          .filter(h => h.jour === jour && h.type === 'rdv' && h.commentaire);
+
+        if (rdv.length === 0) return null;
+
+        return `
+          <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
+          ${rdv.map(h => `<span class="rdv">${h.commentaire}</span>`).join(' ')}
+        `;
+      }).filter(Boolean);
+    %>
+
+    <!-- Ligne 1 : horaires publics -->
+    <div class="ligne">
+      <%- lignePublic.join('<span class="separator">|</span>') %>
+    </div>
+
+    <!-- Ligne 2 : sur rdv si présent -->
+    <% if (ligneRDV.length > 0) { %>
+      <div class="ligne">
+        <%- ligneRDV.join('<span class="separator">|</span>') %>
       </div>
     <% } %>
   </div>
