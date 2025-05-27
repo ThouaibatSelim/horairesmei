@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion Admin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+  <div class="login-container">
+<div class="emoji-container">
+  ⚙️
+</div>
+
+
+
+
+    <h1>Administrator</h1>
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/login" method="POST">
+      <input type="email" name="email" placeholder="Login" required>
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+</body>
+</html>
