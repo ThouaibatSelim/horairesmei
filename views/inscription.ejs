@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Créer un compte</title>
+</head>
+<body>
+  <h2>Inscription</h2>
+  <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+  <% if (success) { %><p style="color:green;"><%= success %></p><% } %>
+  <form action="/inscription" method="POST">
+    <input type="email" name="login" placeholder="Login" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+    <input type="text" name="telephone" placeholder="Téléphone" required>
+    <button type="submit">S'inscrire</button>
+  </form>
+  <a href="/login">Retour à la connexion</a>
+</body>
+</html>
