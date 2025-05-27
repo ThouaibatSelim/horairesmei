@@ -2,40 +2,46 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Horaires</title>
+  <title>Interface Admin</title>
   <link rel="stylesheet" href="/admin.css">
-
 </head>
-
 <body>
-  <h1>Horaires d'ouverture</h1>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Jour</th>
-        <th>Type</th>
-        <th>Ouverture</th>
-        <th>Fermeture</th>
-        <th>Commentaire</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% horaires.forEach(h => { %>
+  <div class="container">
+    <h1>Interface d’administration</h1>
+
+<div class="add-btn">
+  <a href="/admin/add" class="btn add">➕ Ajouter un créneau</a>
+</div>
+
+
+    <table>
+      <thead>
         <tr>
-          <td><%= h.jour %></td>
-          <td><%= h.type %></td>
-          <td><%= h.ouverture || '-' %></td>
-          <td><%= h.fermeture || '-' %></td>
-          <td><%= h.commentaire || '-' %></td>
-          <td>
-            <a href="/admin/edit/<%= h.id %>" class="button edit">Modifier</a>
-            <a href="/admin/delete/<%= h.id %>" class="button delete">Supprimer</a>
-          </td>
+          <th>Jour</th>
+          <th>Type</th>
+          <th>Ouverture</th>
+          <th>Fermeture</th>
+          <th>Commentaire</th>
+          <th>Actions</th>
         </tr>
-      <% }); %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% horaires.forEach(h => { %>
+          <tr>
+            <td><%= h.jour %></td>
+            <td><%= h.type %></td>
+            <td><%= h.ouverture ? h.ouverture.slice(0,5) : '-' %></td>
+            <td><%= h.fermeture ? h.fermeture.slice(0,5) : '-' %></td>
+            <td><%= h.commentaire || '-' %></td>
+            <td class="actions">
+              <a href="/admin/edit/<%= h.id %>" class="btn edit">Modifier</a>
+              <a href="/admin/delete/<%= h.id %>" class="btn delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?');">Supprimer</a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
+

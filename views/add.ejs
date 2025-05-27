@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un créneau</title>
+  <link rel="stylesheet" href="/add.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Ajouter un créneau</h1>
+
+    <form action="/admin/add" method="POST">
+      <label>Jour :</label>
+      <select name="jour" required>
+        <% ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'].forEach(j => { %>
+          <option value="<%= j %>"><%= j.charAt(0).toUpperCase() + j.slice(1) %></option>
+        <% }) %>
+      </select>
+
+      <label>Type :</label>
+      <select name="type" required>
+        <option value="public">Public</option>
+        <option value="rdv">Sur rendez-vous</option>
+      </select>
+
+      <label>Heure d'ouverture :</label>
+      <input type="time" name="ouverture">
+
+      <label>Heure de fermeture :</label>
+      <input type="time" name="fermeture">
+
+      <label>Commentaire :</label>
+      <input type="text" name="commentaire">
+
+      <button type="submit">Ajouter</button>
+    </form>
+  </div>
+</body>
+</html>

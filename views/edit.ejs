@@ -2,13 +2,14 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Modifier un créneau</title>
+  <title>Modifier les horaires</title>
   <link rel="stylesheet" href="/edit.css">
 
 </head>
 <body>
-  <h1>Modifier le créneau</h1>
+  <h1>Modifier les horaires</h1>
 
+  <!-- Formulaire de modification -->
   <form action="/admin/update/<%= horaire.id %>" method="POST">
     <label for="jour">Jour :</label>
     <input type="text" name="jour" value="<%= horaire.jour %>" required>
