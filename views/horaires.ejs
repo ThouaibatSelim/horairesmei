@@ -2,131 +2,84 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Horaires d'ouverture</title>
+  <title>Horaires</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
+    body {
+      font-family: sans-serif;
+      padding: 20px;
       background-color: #f9f9f9;
       color: #333;
-      font-size: 14px;
-      line-height: 1.4;
-      box-sizing: border-box;
     }
-
-    .container {
-      max-width: 100%;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #2c3e50;
-    }
-
     .ligne {
-      margin-bottom: 15px;
-      padding: 10px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      background: white;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       overflow-x: auto;
       white-space: nowrap;
     }
-
-    .jour {
-      font-weight: bold;
-      color: #2c3e50;
-    }
-
-    .horaire {
-      margin: 0 6px;
-      color: #145214;
-    }
-
-    .rdv {
-      margin: 0 6px;
-      color: #cc0000;
-      font-weight: bold;
-    }
-
-    .ferme {
-      margin: 0 6px;
-      color: #999;
-      font-style: italic;
-    }
-
-    .separator {
-      margin: 0 12px;
-      color: #888;
-    }
+    .jour { font-weight: bold; color: #2c3e50; }
+    .horaire { margin: 0 6px; color: #145214; }
+    .rdv { margin-left: 10px; color: #cc0000; font-weight: bold; }
+    .separator { margin: 0 12px; color: #999; }
   </style>
 </head>
 <body>
-  <div class="container">
 
-<%
+  <div class="ligne">
+   <%
   const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+  const groupByJour = {};
 
-  const lignePublic = jours.map(jour => {
-    const publics = horaires.filter(h => h.jour === jour && h.type === 'public');
+  horaires.forEach(h => {
+    if (!groupByJour[h.jour]) groupByJour[h.jour] = { publics: [], rdvs: [] };
+    if (h.type === 'public') groupByJour[h.jour].publics.push(h);
+    if (h.type === 'rdv') groupByJour[h.jour].rdvs.push(h);
+  });
 
-    const commentaireFermeture = publics.find(h => h.commentaire && h.commentaire.toLowerCase() === 'fermé');
-    const horairesValides = publics.filter(h => h.ouverture && h.fermeture);
+  let rendu = [];
 
-    let contenu = '';
+  jours.forEach(jour => {
+    const bloc = groupByJour[jour];
 
-    if (commentaireFermeture) {
-      contenu = `<span class="ferme">Fermé</span>`;
-    } else if (horairesValides.length > 0) {
-      contenu = horairesValides
-        .sort((a, b) => a.ouverture.localeCompare(b.ouverture))
-        .map(h => `<span class="horaire">${h.ouverture.slice(0,5)} - ${h.fermeture.slice(0,5)}</span>`)
-        .join(' ');
-    } else {
-      contenu = `<span class="ferme">Fermé</span>`;
+    if (!bloc) {
+      rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">Fermé</span>`);
+      return;
     }
 
-    return `
+    const horairesValides = bloc.publics
+      .filter(h => h.ouverture && h.fermeture)
+      .sort((a, b) => a.ouverture.localeCompare(b.ouverture));
+
+    if (horairesValides.length === 0) {
+      const commentaireFerme = bloc.publics.concat(bloc.rdvs).find(h => h.commentaire && h.commentaire.toLowerCase().includes('fermé'));
+      if (commentaireFerme) {
+        rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">${commentaireFerme.commentaire}</span>`);
+      } else {
+        rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">Fermé</span>`);
+      }
+      return;
+    }
+
+    const horaires = horairesValides.map(h =>
+      `<span class="horaire">${h.ouverture.slice(0,5)} - ${h.fermeture.slice(0,5)}</span>`
+    ).join(' ');
+
+    const rdv = bloc.rdvs.map(h =>
+      `<span class="rdv">${'(Sur Rendez-Vous)'}</span>`
+    ).join(' ');
+
+    rendu.push(`
       <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
-      ${contenu}
-    `;
+      ${horaires} ${rdv}
+    `);
   });
 %>
 
-<%
-  const ligneRDV = jours.map(jour => {
-    const rdv = horaires.filter(h => h.jour === jour && h.type === 'rdv' && h.commentaire);
 
-    if (rdv.length === 0) {
-      return null;
-    }
-
-    return `
-      <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
-      ${rdv.map(h => `<span class="rdv">${h.commentaire}</span>`).join(' ')}
-    `;
-  }).filter(Boolean);
-%>
-
-
-
-    <!-- Ligne 1 : horaires publics -->
-    <div class="ligne">
-      <%- lignePublic.join('<span class="separator">|</span>') %>
-    </div>
-
-    <!-- Ligne 2 : sur rdv si présent -->
-    <% if (ligneRDV.length > 0) { %>
-      <div class="ligne">
-        <%- ligneRDV.join('<span class="separator">|</span>') %>
-      </div>
-    <% } %>
+    <%- rendu.join('<span class="separator">|</span>') %>
   </div>
 </body>
 </html>
