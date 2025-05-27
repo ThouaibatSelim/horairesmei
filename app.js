@@ -1,10 +1,9 @@
-
-
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
 
 const app = express();
+ 
 const port = 3000;
 
 // Supabase client config
@@ -36,11 +35,11 @@ app.post('/login', async (req, res) => {
   }
 
   // Authentifié avec succès
-  res.redirect('/interface');
+  res.redirect('/admin');
 });
 
-app.get('/interface', (req, res) => {
-  res.render('interface');
+app.get('/admin', (req, res) => {
+  res.render('admin');
 });
 
 app.listen(port, () => {

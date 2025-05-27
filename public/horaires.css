@@ -1,0 +1,21 @@
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .ligne {
+      background: white;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .jour { font-weight: bold; color: #2c3e50; }
+    .horaire { margin: 0 6px; color: #145214; }
+    .rdv { margin-left: 10px; color: #cc0000; font-weight: bold; }
+    .separator { margin: 0 12px; color: #999; }
+
+
