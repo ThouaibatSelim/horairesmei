@@ -2,66 +2,48 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Horaires</title>
+  <title>Horaires d’ouverture</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/horaires.css">
+  <link rel="stylesheet" href="/horaires.css">
 </head>
 <body>
+  <div class="container">
 
-<!-- Affichage des horaires -->
+    <div class="ligne">
+      <%
+        const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
 
-  <div class="ligne">
-   <%
-  const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
-  const groupByJour = {};
+        const rendu = jours.map(jour => {
+          const jourLabel = jour.charAt(0).toUpperCase() + jour.slice(1);
+          const publics = horaires.filter(h => h.jour.toLowerCase() === jour && h.type === 'public');
+          const rdvs = horaires.filter(h => h.jour.toLowerCase() === jour && h.type === 'rdv');
+          const ferme = horaires.find(h => h.jour.toLowerCase() === jour && h.commentaire?.toLowerCase() === 'fermé');
 
-  horaires.forEach(h => {
-    if (!groupByJour[h.jour]) groupByJour[h.jour] = { publics: [], rdvs: [] };
-    if (h.type === 'public') groupByJour[h.jour].publics.push(h);
-    if (h.type === 'rdv') groupByJour[h.jour].rdvs.push(h);
-  });
+          let contenu = '';
 
-  let rendu = [];
-
-  jours.forEach(jour => {
-    const bloc = groupByJour[jour];
-
-    if (!bloc) {
-      rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">Fermé</span>`);
-      return;
-    }
-
-    const horairesValides = bloc.publics
-      .filter(h => h.ouverture && h.fermeture)
-      .sort((a, b) => a.ouverture.localeCompare(b.ouverture));
-
-    if (horairesValides.length === 0) {
-      const commentaireFerme = bloc.publics.concat(bloc.rdvs).find(h => h.commentaire && h.commentaire.toLowerCase().includes('fermé'));
-      if (commentaireFerme) {
-        rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">${commentaireFerme.commentaire}</span>`);
-      } else {
-        rendu.push(`<span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span> <span class="horaire">Fermé</span>`);
-      }
-      return;
-    }
-
-    const horaires = horairesValides.map(h =>
-      `<span class="horaire">${h.ouverture.slice(0,5)} - ${h.fermeture.slice(0,5)}</span>`
-    ).join(' ');
-
-    const rdv = bloc.rdvs.map(h =>
-      `<span class="rdv">${'(Sur Rendez-Vous)'}</span>`
-    ).join(' ');
-
-    rendu.push(`
-      <span class="jour">${jour.charAt(0).toUpperCase() + jour.slice(1)} :</span>
-      ${horaires} ${rdv}
-    `);
-  });
-%>
+          if (ferme) {
+            contenu = `<span class="ferme">Fermé</span>`;
+          } else {
+        const horairesDuJour = [...publics, ...rdvs]
+          .filter(h => h.ouverture && h.fermeture)
+          .map(h => `<span class="horaire">${h.ouverture.slice(0,5)} - ${h.fermeture.slice(0,5)}</span>`)
+          .join(' ');
 
 
-    <%- rendu.join('<span class="separator">|</span>') %>
+            const rdvTexte = rdvs.length > 0
+              ? `<span class="rdv">${rdvs[0].commentaire}</span>`
+              : '';
+
+          contenu = `${horairesDuJour} ${rdvTexte}`;
+
+          }
+
+          return `<span class="jour">${jourLabel} :</span> ${contenu}`;
+        });
+
+        %>
+        <%- rendu.join('<span class="separator">|</span>') %>
+    </div>
   </div>
 </body>
 </html>

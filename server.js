@@ -1,27 +1,32 @@
-// Configuration de l'app
-
 const express = require('express');
 const mysql = require('mysql2/promise');
 const app = express();
 const PORT = 3000;
-const bcrypt = require('bcrypt');
 
-// App EJS
 app.set('view engine', 'ejs');
-
-// Middleware pour les formulaires (utile plus tard pour admin)
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-// Connexion MySQL
 let db;
+
 (async () => {
-  db = await mysql.createConnection({
-    host: '192.168.0.63',
-    user: 'stagiaire',
-    password: 'stagiaire',
-    database: 'stagiaire'
-  });
-  console.log('✅ Connecté à MySQL');
+  try {
+    db = await mysql.createConnection({
+      host: '192.168.0.63',
+      user: 'stagiaire',
+      password: 'stagiaire',
+      database: 'stagiaire'
+    });
+    console.log('✅ Connecté à MySQL');
+
+    // Démarrer le serveur **après** la connexion
+    app.listen(PORT, () => {
+      console.log(`🟢 Serveur lancé sur http://localhost:${PORT}`);
+    });
+
+  } catch (err) {
+    console.error('❌ Erreur de connexion MySQL :', err);
+  }
 })();
 
 // Route publique /horaires
@@ -33,7 +38,7 @@ app.get('/horaires', async (req, res) => {
     `);
     res.render('horaires', { horaires: rows });
   } catch (err) {
-    console.error(err);
+    console.error("Erreur MySQL", err);
     res.status(500).send("Erreur lors de la récupération des horaires.");
   }
 });
@@ -67,11 +72,6 @@ app.post('/admin/update/:id', async (req, res) => {
   }
 });
 
-
-// Ecoute du port
-app.listen(PORT, () => {
-  console.log(`🟢 Serveur en ligne sur http://localhost:${PORT}`);
-});
 
 // Afficher le formulaire
 app.get('/admin/add', (req, res) => {
