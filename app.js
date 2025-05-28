@@ -91,6 +91,7 @@ app.get('/logout', (req, res) => {
 });
 
 
+
 // Page inscription (UTILISATEUR)
 app.get('/inscription', (req, res) => {
   res.render('inscription', { error: null, success: null });
