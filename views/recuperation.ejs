@@ -2,9 +2,14 @@
 <html>
 <head>
   <title>Récupération mot de passe</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/recuperation.css">
 </head>
 <body>
+
+  <% if (login) { %>
+  <p class="success">Identifiant associé : <%= login %></p>
+<% } %>
+
   <div class="container">
     <h2>Récupération du mot de passe</h2>
 
@@ -15,7 +20,8 @@
     <form action="/recuperation" method="POST">
       <input type="text" name="telephone" placeholder="Numéro de téléphone" required>
       <button type="submit">Rechercher</button>
-    </form>
+    </form> 
+     <a href="/login">retour ?</a>
   </div>
 </body>
 </html>

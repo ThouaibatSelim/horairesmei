@@ -11,10 +11,10 @@ const saltRounds = 10;
 
 // Configuration de la base de données
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'horaires'
+  host: '192.168.0.63',
+  user: 'stagiaire',
+  password: 'stagiaire',
+  database: 'stagiaire'
 });
 
 db.connect(err => {
@@ -72,6 +72,8 @@ app.post('/login', (req, res) => {
 
 // Interface protégée
 // ✅ Interface protégée
+// Interface protégée
+
 app.get('/interface', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/login'); // empêche l'accès sans session
@@ -89,6 +91,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+
 
 
 // Page inscription (UTILISATEUR)
