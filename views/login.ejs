@@ -1,8 +1,5 @@
-
-
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,28 +11,31 @@
 
 <body>
   <div class="container">
-   <h2>Connexion <span class="emoji">🔒</span></h2>
-
-
-
-
+    
+    <h2>Connexion <span class="emoji">🔒</span></h2>
+    
+    <!-- Erreur de connexion -->
     <% if (error) { %>
       <p class="error"><%= error %></p>
-    <% } %>
+      <% } %>
+      
+      <!-- Formulaire de connexion -->
 
     <form action="/login" method="POST">
       <input type="email" name="login" placeholder="Login" required>
       <input type="password" name="password" placeholder="Mot de passe" required>
       <button type="submit">Se connecter</button>
     </form>
-
     <hr>
 
+    <!-- Lien créer compte -->
     <p>Pas encore de compte ?</p>
     <a href="/inscription">
-  <button>Créer un compte</button>
-</a>
 
+    <button>Créer un compte</button>
+    </a>
+
+    <!-- Mot de passe oublié -->
     <a href="/recuperation">Mot de passe oublié ?</a>
 
   </div>

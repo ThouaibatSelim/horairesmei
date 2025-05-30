@@ -24,7 +24,7 @@ h1 {
 
 .btn.add {
   background-color: #2ecc71;
-  color: white;
+  color: rgb(25, 24, 24);
 }
 
 
@@ -65,4 +65,25 @@ th {
 
 .btn.delete {
   background-color: #e74c3c;
+}
+
+.logout-form {
+  display: inline-block;
+  margin-top: 10px;
+  text-align: right;
+}
+
+.logout-btn {
+  background-color: #cc0000;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.logout-btn:hover {
+  background-color: #a30000;
 }

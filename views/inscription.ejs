@@ -8,14 +8,23 @@
 
 <body>
   <h2>Inscription</h2>
+
+<!-- Succés ou échec crétion de compte -->
   <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
   <% if (success) { %><p style="color:green;"><%= success %></p><% } %>
+
+  <!-- Formulaire d'inscription -->
+
   <form action="/inscription" method="POST">
     <input type="email" name="login" placeholder="Login" required>
     <input type="password" name="password" placeholder="Mot de passe" required>
     <input type="text" name="telephone" placeholder="Téléphone" required>
+
+    <!-- Bouton d'inscription -->
     <button type="submit">S'inscrire</button>
   </form>
+
+  <!-- Lien connexion -->
   <a href="/login">Retour à la connexion</a>
 </body>
 </html>

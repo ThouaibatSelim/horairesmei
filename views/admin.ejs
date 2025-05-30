@@ -2,18 +2,25 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Interface Admin</title>
+  <title>Administrateur</title>
   <link rel="stylesheet" href="/admin.css">
+
+  <!-- Bouton déconnexion -->
+<form action="/logout" method="GET" class="logout-form">
+  <button type="submit" class="logout-btn">Déconnexion</button>
+</form>
+
 </head>
 <body>
   <div class="container">
-    <h1>Interface d’administration</h1>
+    <!-- Message Bienvenue -->
+<h1>Bienvenue <%= user.login %> !</h1>
 
+<!-- Bouton ajouter -->
 <div class="add-btn">
   <a href="/admin/add" class="btn add">➕ Ajouter un créneau</a>
 </div>
-
-
+<!-- Tableau horaires -->
     <table>
       <thead>
         <tr>
@@ -33,6 +40,8 @@
             <td><%= h.ouverture ? h.ouverture.slice(0,5) : '-' %></td>
             <td><%= h.fermeture ? h.fermeture.slice(0,5) : '-' %></td>
             <td><%= h.commentaire || '-' %></td>
+
+            <!-- Boutons modifier/supprimer -->
             <td class="actions">
               <a href="/admin/edit/<%= h.id %>" class="btn edit">Modifier</a>
               <a href="/admin/delete/<%= h.id %>" class="btn delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?');">Supprimer</a>
